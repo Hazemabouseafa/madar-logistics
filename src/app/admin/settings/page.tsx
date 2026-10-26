@@ -24,17 +24,37 @@ import {
   Building2,
   Plus,
   Trash2,
-  Anchor
+  Anchor,
+  KeyRound,
+  Eye,
+  EyeOff,
+  Lock,
+  ShieldAlert
 } from "lucide-react";
 import { SiteSettings } from "@/lib/types";
 import { DEFAULT_SETTINGS } from "@/lib/default-settings";
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS);
-  const [activeTab, setActiveTab] = useState<"content" | "social" | "emails" | "location">("content");
+  const [activeTab, setActiveTab] = useState<"content" | "social" | "emails" | "location" | "security">("content");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ type: "success" | "error" | null; message: string }>({
+    type: null,
+    message: "",
+  });
+
+  // Password change states
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [showCurrentPass, setShowCurrentPass] = useState(false);
+  const [showNewPass, setShowNewPass] = useState(false);
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
+  const [passwordToast, setPasswordToast] = useState<{ type: "success" | "error" | null; message: string }>({
     type: null,
     message: "",
   });
@@ -68,6 +88,15 @@ export default function AdminSettingsPage() {
   };
 
   useEffect(() => {
+    // Check if URL query specified a tab, e.g. /admin/settings?tab=security
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tab = urlParams.get("tab");
+      if (tab === "security" || tab === "content" || tab === "social" || tab === "emails" || tab === "location") {
+        setActiveTab(tab as any);
+      }
+    }
+
     async function loadSettings() {
       try {
         const res = await fetch("/api/admin/settings");
@@ -86,6 +115,63 @@ export default function AdminSettingsPage() {
     }
     loadSettings();
   }, []);
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordToast({ type: null, message: "" });
+
+    if (!passwordForm.currentPassword) {
+      setPasswordToast({ type: "error", message: "يرجى إدخال كلمة المرور الحالية" });
+      return;
+    }
+
+    if (passwordForm.newPassword.length < 8) {
+      setPasswordToast({ type: "error", message: "يجب ألا تقل كلمة المرور الجديدة عن 8 أحرف" });
+      return;
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordToast({ type: "error", message: "كلمة المرور الجديدة وتأكيدها غير متطابقين" });
+      return;
+    }
+
+    if (passwordForm.newPassword === passwordForm.currentPassword) {
+      setPasswordToast({ type: "error", message: "كلمة المرور الجديدة يجب أن تكون مختلفة عن كلمة المرور الحالية" });
+      return;
+    }
+
+    setChangingPassword(true);
+    try {
+      const res = await fetch("/api/admin/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(passwordForm),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "فشل تغيير كلمة المرور");
+      }
+
+      setPasswordToast({
+        type: "success",
+        message: data.message || "تم تغيير كلمة المرور بنجاح! يمكنك استخدامها لتسجيل الدخول القادم.",
+      });
+
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (err: any) {
+      setPasswordToast({
+        type: "error",
+        message: err.message || "حدث خطأ أثناء محاولة تغيير كلمة المرور",
+      });
+    } finally {
+      setChangingPassword(false);
+    }
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -206,10 +292,23 @@ export default function AdminSettingsPage() {
           <MapPin className="w-4 h-4" />
           <span>الموقع وساعات العمل</span>
         </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("security")}
+          className={`flex items-center gap-2 px-5 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap ${
+            activeTab === "security"
+              ? "bg-madar-gold text-madar-dark shadow-md"
+              : "text-slate-300 hover:text-white hover:bg-white/5"
+          }`}
+        >
+          <KeyRound className="w-4 h-4" />
+          <span>أمان الحساب وكلمة المرور</span>
+        </button>
       </div>
 
-      {/* Toast Notification */}
-      {toast.type && (
+      {/* Toast Notification (CMS Settings) */}
+      {activeTab !== "security" && toast.type && (
         <div
           className={`p-4 rounded-2xl flex items-center gap-3 border ${
             toast.type === "success"
@@ -226,8 +325,9 @@ export default function AdminSettingsPage() {
         </div>
       )}
 
-      {/* Form */}
-      <form onSubmit={handleSave} className="space-y-8">
+      {/* CMS Form (Tabs 1-4) */}
+      {activeTab !== "security" && (
+        <form onSubmit={handleSave} className="space-y-8">
 
         {/* ------------------------------------------------------------- */}
         {/* TAB 1: LANDING PAGE CMS CONTENT */}
@@ -1101,6 +1201,159 @@ export default function AdminSettingsPage() {
         </div>
 
       </form>
+      )}
+
+      {/* ------------------------------------------------------------- */}
+      {/* TAB 5: SECURITY & CHANGE ADMIN PASSWORD */}
+      {/* ------------------------------------------------------------- */}
+      {activeTab === "security" && (
+        <div className="space-y-6 max-w-3xl">
+          <div className="glass-panel rounded-3xl p-6 sm:p-8 border border-madar-cardBorder shadow-xl space-y-6">
+            <div className="flex items-center gap-3.5 pb-4 border-b border-white/10">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/15 text-madar-gold border border-amber-500/30 flex items-center justify-center shrink-0">
+                <KeyRound className="w-6 h-6" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">تغيير كلمة المرور وأمان حساب الإدارة</h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  قم بتعيين كلمة مرور جديدة قوية لحماية لوحة التحكم ومنع الوصول غير المصرح به
+                </p>
+              </div>
+            </div>
+
+            {/* Informational Callout */}
+            <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-start gap-3">
+              <ShieldCheck className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+              <div className="text-xs text-slate-300 leading-relaxed">
+                <strong className="text-white block mb-1">إرشادات حماية الحساب:</strong>
+                يجب ألا تقل كلمة المرور عن 8 أحرف، ويفضل أن تشتمل على حروف وأرقام ورموز. يتم تشفير كلمة المرور فوراً بأقوى خوارزميات التشفير (Bcrypt) وحفظها في قاعدة البيانات المحلية.
+              </div>
+            </div>
+
+            {/* Security Toast Notification */}
+            {passwordToast.type && (
+              <div
+                className={`p-4 rounded-2xl flex items-center gap-3 border ${
+                  passwordToast.type === "success"
+                    ? "bg-emerald-950/60 border-emerald-500/50 text-emerald-200"
+                    : "bg-rose-950/60 border-rose-500/50 text-rose-200"
+                }`}
+              >
+                {passwordToast.type === "success" ? (
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                ) : (
+                  <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
+                )}
+                <span className="text-sm font-semibold">{passwordToast.message}</span>
+              </div>
+            )}
+
+            {/* Form */}
+            <form onSubmit={handlePasswordSubmit} className="space-y-5">
+              {/* Current Password */}
+              <div>
+                <label className="block text-xs font-bold text-slate-200 mb-2">
+                  كلمة المرور الحالية <span className="text-madar-gold">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showCurrentPass ? "text" : "password"}
+                    required
+                    value={passwordForm.currentPassword}
+                    onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+                    placeholder="أدخل كلمة المرور الحالية المسجل بها دخولك..."
+                    className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-madar-dark border border-madar-cardBorder text-white placeholder-slate-500 text-sm focus:border-madar-gold transition-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPass(!showCurrentPass)}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1"
+                    title={showCurrentPass ? "إخفاء" : "إظهار"}
+                  >
+                    {showCurrentPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* New Password */}
+              <div>
+                <label className="block text-xs font-bold text-slate-200 mb-2">
+                  كلمة المرور الجديدة <span className="text-madar-gold">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showNewPass ? "text" : "password"}
+                    required
+                    minLength={8}
+                    value={passwordForm.newPassword}
+                    onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                    placeholder="8 أحرف أو أكثر..."
+                    className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-madar-dark border border-madar-cardBorder text-white placeholder-slate-500 text-sm focus:border-madar-gold transition-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPass(!showNewPass)}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1"
+                    title={showNewPass ? "إخفاء" : "إظهار"}
+                  >
+                    {showNewPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                <span className="text-[11px] text-slate-400 mt-1.5 block">
+                  يجب أن تتكون من 8 أحرف على الأقل
+                </span>
+              </div>
+
+              {/* Confirm Password */}
+              <div>
+                <label className="block text-xs font-bold text-slate-200 mb-2">
+                  تأكيد كلمة المرور الجديدة <span className="text-madar-gold">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPass ? "text" : "password"}
+                    required
+                    minLength={8}
+                    value={passwordForm.confirmPassword}
+                    onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                    placeholder="أعد إدخال كلمة المرور الجديدة..."
+                    className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-madar-dark border border-madar-cardBorder text-white placeholder-slate-500 text-sm focus:border-madar-gold transition-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPass(!showConfirmPass)}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1"
+                    title={showConfirmPass ? "إخفاء" : "إظهار"}
+                  >
+                    {showConfirmPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Submit button */}
+              <div className="pt-4 border-t border-white/10 flex items-center justify-end">
+                <button
+                  type="submit"
+                  disabled={changingPassword}
+                  className="flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-gradient-to-r from-madar-gold via-amber-400 to-madar-goldHover text-madar-dark font-black text-sm shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-[0.99] transition-all disabled:opacity-50"
+                >
+                  {changingPassword ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>جاري حفظ وتشفير كلمة المرور...</span>
+                    </>
+                  ) : (
+                    <>
+                      <KeyRound className="w-4 h-4" />
+                      <span>تحديث كلمة المرور الآن</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

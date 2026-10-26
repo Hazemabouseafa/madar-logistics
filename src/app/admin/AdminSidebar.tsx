@@ -14,7 +14,8 @@ import {
   Menu, 
   X,
   User,
-  ShieldCheck
+  ShieldCheck,
+  KeyRound
 } from "lucide-react";
 import { AdminUserSession } from "@/lib/types";
 
@@ -47,6 +48,12 @@ export default function AdminSidebar({ session }: { session: AdminUserSession })
       href: "/admin/settings",
       icon: Settings,
       active: pathname.startsWith("/admin/settings"),
+    },
+    {
+      name: "أمان الحساب وكلمة المرور",
+      href: "/admin/settings?tab=security",
+      icon: KeyRound,
+      active: false,
     },
   ];
 
@@ -105,16 +112,24 @@ export default function AdminSidebar({ session }: { session: AdminUserSession })
             </Link>
           </div>
 
-          {/* User Badge */}
-          <div className="p-3.5 rounded-2xl bg-madar-dark/80 border border-white/5 mb-6 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-madar-gold/15 text-madar-gold flex items-center justify-center shrink-0">
-              <User className="w-4 h-4" />
+          {/* User Badge & Quick Password Change link */}
+          <Link
+            href="/admin/settings?tab=security"
+            onClick={() => setMobileOpen(false)}
+            className="p-3.5 rounded-2xl bg-madar-dark/80 hover:bg-madar-dark border border-white/5 hover:border-madar-gold/30 mb-6 flex items-center justify-between group transition-all"
+            title="إدارة الحساب وتغيير كلمة المرور"
+          >
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="w-9 h-9 rounded-xl bg-madar-gold/15 text-madar-gold flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <User className="w-4 h-4" />
+              </div>
+              <div className="overflow-hidden">
+                <div className="text-xs font-bold text-white truncate">{session.name}</div>
+                <div className="text-[10px] text-slate-400 truncate">{session.email}</div>
+              </div>
             </div>
-            <div className="overflow-hidden">
-              <div className="text-xs font-bold text-white truncate">{session.name}</div>
-              <div className="text-[10px] text-slate-400 truncate">{session.email}</div>
-            </div>
-          </div>
+            <KeyRound className="w-4 h-4 text-slate-500 group-hover:text-madar-gold transition-colors shrink-0" />
+          </Link>
 
           {/* Nav Links */}
           <nav className="space-y-1.5">

@@ -9,6 +9,7 @@ import prisma from "./db";
 const DATA_DIR = path.join(process.cwd(), ".data");
 const MESSAGES_FILE = path.join(DATA_DIR, "messages.json");
 const SETTINGS_FILE = path.join(DATA_DIR, "settings.json");
+const ADMIN_FILE = path.join(DATA_DIR, "admin.json");
 
 // Default seed messages for realistic initial dashboard view
 const INITIAL_MESSAGES: ContactMessage[] = [
@@ -363,7 +364,15 @@ export async function updateSiteSettings(updates: Partial<SiteSettings>): Promis
 // ---------------------------------------------------------------------------
 // Admin Authentication & Verification
 // ---------------------------------------------------------------------------
-const DEFAULT_ADMIN = {
+interface AdminStoredUser {
+  id: string;
+  email: string;
+  passwordHash: string;
+  name: string;
+  role: string;
+}
+
+const DEFAULT_ADMIN: AdminStoredUser = {
   id: "admin_super",
   email: "admin@madartrans.com",
   // Hash for 'MadarAdmin2025!'
@@ -372,7 +381,7 @@ const DEFAULT_ADMIN = {
   role: "ADMIN",
 };
 
-export async function verifyAdminCredentials(email: string, pass: string) {
+export async function getAdminUser(email: string): Promise<AdminStoredUser | null> {
   const normalizedEmail = email.trim().toLowerCase();
 
   // 1. Try PostgreSQL AdminUser
@@ -382,34 +391,99 @@ export async function verifyAdminCredentials(email: string, pass: string) {
         where: { email: normalizedEmail },
       });
       if (dbAdmin) {
-        const valid = bcrypt.compareSync(pass, dbAdmin.passwordHash);
-        if (valid) {
-          return {
-            id: dbAdmin.id,
-            email: dbAdmin.email,
-            name: dbAdmin.name,
-            role: dbAdmin.role,
-          };
-        }
+        return {
+          id: dbAdmin.id,
+          email: dbAdmin.email,
+          passwordHash: dbAdmin.passwordHash,
+          name: dbAdmin.name,
+          role: dbAdmin.role,
+        };
       }
     } catch {
       // Fallback
     }
   }
 
-  // 2. Default superadmin fallback
+  // 2. Try Local File admin.json fallback
+  const fileAdmin = readJsonFile<AdminStoredUser | null>(ADMIN_FILE, null);
+  if (fileAdmin && fileAdmin.email && fileAdmin.email.toLowerCase() === normalizedEmail) {
+    return fileAdmin;
+  }
+
+  // 3. Fallback to DEFAULT_ADMIN if email matches
   if (normalizedEmail === DEFAULT_ADMIN.email.toLowerCase()) {
-    const valid = bcrypt.compareSync(pass, DEFAULT_ADMIN.passwordHash);
-    if (valid) {
-      return {
-        id: DEFAULT_ADMIN.id,
-        email: DEFAULT_ADMIN.email,
-        name: DEFAULT_ADMIN.name,
-        role: DEFAULT_ADMIN.role,
-      };
-    }
+    return DEFAULT_ADMIN;
+  }
+
+  return null;
+}
+
+export async function verifyAdminCredentials(email: string, pass: string) {
+  const admin = await getAdminUser(email);
+  if (!admin) return null;
+
+  const valid = bcrypt.compareSync(pass, admin.passwordHash);
+  if (valid) {
+    return {
+      id: admin.id,
+      email: admin.email,
+      name: admin.name,
+      role: admin.role,
+    };
   }
   return null;
+}
+
+export async function updateAdminPassword(email: string, currentPass: string, newPass: string) {
+  const admin = await getAdminUser(email);
+  if (!admin) {
+    throw new Error("المستخدم غير موجود");
+  }
+
+  const isCurrentValid = bcrypt.compareSync(currentPass, admin.passwordHash);
+  if (!isCurrentValid) {
+    throw new Error("كلمة المرور الحالية غير صحيحة");
+  }
+
+  if (newPass.length < 8) {
+    throw new Error("يجب ألا تقل كلمة المرور الجديدة عن 8 أحرف");
+  }
+
+  const newHash = bcrypt.hashSync(newPass, 10);
+  const updatedUser: AdminStoredUser = {
+    ...admin,
+    passwordHash: newHash,
+  };
+
+  // 1. Persist to PostgreSQL if available
+  if (process.env.DATABASE_URL) {
+    try {
+      await prisma.adminUser.upsert({
+        where: { email: admin.email.toLowerCase() },
+        update: {
+          passwordHash: newHash,
+          updatedAt: new Date(),
+        },
+        create: {
+          id: admin.id || "admin_super",
+          email: admin.email.toLowerCase(),
+          passwordHash: newHash,
+          name: admin.name || "مدير مدار للنقل",
+          role: admin.role || "ADMIN",
+        },
+      });
+    } catch (err) {
+      console.error("Error updating admin password in PostgreSQL database:", err);
+    }
+  }
+
+  // 2. Persist to Local File (always works, even without DB or in fallback mode)
+  writeJsonFile<AdminStoredUser>(ADMIN_FILE, updatedUser);
+
+  return {
+    success: true,
+    message: "تم تحديث كلمة المرور بنجاح",
+  };
 }
 
 // ---------------------------------------------------------------------------
