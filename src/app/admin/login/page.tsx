@@ -4,12 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Truck, Lock, Mail, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
+import { Lock, Mail, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@madartrans.com");
-  const [password, setPassword] = useState("MadarAdmin2025!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -83,8 +83,8 @@ export default function AdminLoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@madartrans.com"
-                  className="w-full px-4 py-3 rounded-xl bg-madar-dark/80 border border-madar-cardBorder text-white text-sm pl-10"
+                  placeholder="name@company.com"
+                  className="w-full px-4 py-3 rounded-xl bg-madar-dark/80 border border-madar-cardBorder text-white text-sm pl-10 focus:border-madar-gold transition-colors"
                 />
                 <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
               </div>
@@ -101,8 +101,8 @@ export default function AdminLoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 rounded-xl bg-madar-dark/80 border border-madar-cardBorder text-white text-sm pl-10"
+                  placeholder="أدخل كلمة المرور"
+                  className="w-full px-4 py-3 rounded-xl bg-madar-dark/80 border border-madar-cardBorder text-white text-sm pl-10 focus:border-madar-gold transition-colors"
                 />
                 <button
                   type="button"
@@ -133,13 +133,6 @@ export default function AdminLoginPage() {
               )}
             </button>
           </form>
-
-          {/* Quick info credentials badge */}
-          <div className="mt-6 p-3.5 rounded-2xl bg-white/5 border border-white/10 text-xs text-slate-400 space-y-1">
-            <div className="font-bold text-slate-300 text-[11px]">بيانات الدخول التجريبية المدمجة:</div>
-            <div>البريد: <span className="text-madar-gold font-mono">admin@madartrans.com</span></div>
-            <div>كلمة المرور: <span className="text-madar-gold font-mono">MadarAdmin2025!</span></div>
-          </div>
         </div>
 
         {/* Back to website */}

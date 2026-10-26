@@ -11,42 +11,8 @@ const MESSAGES_FILE = path.join(DATA_DIR, "messages.json");
 const SETTINGS_FILE = path.join(DATA_DIR, "settings.json");
 const ADMIN_FILE = path.join(DATA_DIR, "admin.json");
 
-// Default seed messages for realistic initial dashboard view
-const INITIAL_MESSAGES: ContactMessage[] = [
-  {
-    id: "msg_seed_1",
-    name: "أحمد مصطفى (شركة النيل للصناعات الغذائية)",
-    phone: "01012345678",
-    serviceType: "حاويات مبردة",
-    message: "نحتاج لنقل 4 حاويات مبردة 40 قدم محملة بالفراولة المجمدة من مزارع النوبارية إلى ميناء الدخيلة مع الحفاظ على درجة حرارة -18 مئوية ومولدات كهربائية متواصلة.",
-    status: "NEW",
-    notes: "طلب عاجل لتنسيق باخرة الشحن يوم الخميس.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 35).toISOString(),
-    updatedAt: new Date(Date.now() - 1000 * 60 * 35).toISOString(),
-  },
-  {
-    id: "msg_seed_2",
-    name: "م. إبراهيم كمال (المتحدة للاستيراد والتصدير)",
-    phone: "01289876543",
-    serviceType: "حاويات جافة",
-    message: "استفسار عن حجز شاحنات لنقل 6 حاويات جافة 40 قدم High Cube من ميناء الإسكندرية إلى المنطقة الصناعية بالسادس من أكتوبر بعد إنهاء الإفراج الجمركي.",
-    status: "IN_PROGRESS",
-    notes: "تم الاتصال بالعميل وتجهيز عرض السعر وجاري إرسال المستندات.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
-    updatedAt: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-  },
-  {
-    id: "msg_seed_3",
-    name: "سارة عبد الرحمن (فارما كير للأدوية)",
-    phone: "01155443322",
-    serviceType: "حاويات مبردة",
-    message: "طلب توريد شاحنات تبريد معتمدة لنقل شحنة محاليل ومستلزمات طبية مستوردة من ميناء دمياط إلى مستودعات العبور مع تقديم سجل درجات الحرارة لحظياً.",
-    status: "COMPLETED",
-    notes: "تم تنفيذ النقل بنجاح وتسليم إيصالات الاستلام والمستندات.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-    updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
-  },
-];
+// Initial empty messages list for clean production readiness
+const INITIAL_MESSAGES: ContactMessage[] = [];
 
 function ensureDataDir() {
   if (!fs.existsSync(DATA_DIR)) {

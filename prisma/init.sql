@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS "AdminUser" (
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 4. Insert Default Admin User (Password: MadarAdmin2025!)
+-- 4. Insert Default Admin User
 INSERT INTO "AdminUser" ("id", "email", "passwordHash", "name", "role", "createdAt", "updatedAt")
 VALUES (
     'admin_super',
@@ -52,40 +52,3 @@ VALUES (
 )
 ON CONFLICT ("email") DO NOTHING;
 
--- 5. Insert Initial Messages
-INSERT INTO "Message" ("id", "name", "phone", "serviceType", "message", "status", "notes", "createdAt", "updatedAt")
-VALUES 
-(
-    'msg_seed_1',
-    'أحمد مصطفى (شركة النيل للصناعات الغذائية)',
-    '01012345678',
-    'حاويات مبردة',
-    'نحتاج لنقل 4 حاويات مبردة 40 قدم محملة بالفراولة المجمدة من مزارع النوبارية إلى ميناء الدخيلة مع الحفاظ على درجة حرارة -18 مئوية ومولدات كهربائية متواصلة.',
-    'NEW',
-    'طلب عاجل لتنسيق باخرة الشحن يوم الخميس.',
-    CURRENT_TIMESTAMP - INTERVAL '35 minutes',
-    CURRENT_TIMESTAMP - INTERVAL '35 minutes'
-),
-(
-    'msg_seed_2',
-    'م. إبراهيم كمال (المتحدة للاستيراد والتصدير)',
-    '01289876543',
-    'حاويات جافة',
-    'استفسار عن حجز شاحنات لنقل 6 حاويات جافة 40 قدم High Cube من ميناء الإسكندرية إلى المنطقة الصناعية بالسادس من أكتوبر بعد إنهاء الإفراج الجمركي.',
-    'IN_PROGRESS',
-    'تم الاتصال بالعميل وتجهيز عرض السعر وجاري إرسال المستندات.',
-    CURRENT_TIMESTAMP - INTERVAL '3 hours',
-    CURRENT_TIMESTAMP - INTERVAL '1 hour'
-),
-(
-    'msg_seed_3',
-    'سارة عبد الرحمن (فارما كير للأدوية)',
-    '01155443322',
-    'حاويات مبردة',
-    'طلب توريد شاحنات تبريد معتمدة لنقل شحنة محاليل ومستلزمات طبية مستوردة من ميناء دمياط إلى مستودعات العبور مع تقديم سجل درجات الحرارة لحظياً.',
-    'COMPLETED',
-    'تم تنفيذ النقل بنجاح وتسليم إيصالات الاستلام والمستندات.',
-    CURRENT_TIMESTAMP - INTERVAL '1 day',
-    CURRENT_TIMESTAMP - INTERVAL '12 hours'
-)
-ON CONFLICT ("id") DO NOTHING;
