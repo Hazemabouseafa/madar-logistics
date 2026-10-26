@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { 
-  Phone, 
   MessageSquare, 
   Menu, 
   X, 
@@ -21,7 +20,6 @@ interface NavbarProps {
 export default function Navbar({
   whatsappNumber = "201050028330",
   whatsappDisplay = "+20 10 50028330",
-  phoneNumber = "+20 10 50028330",
 }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -30,7 +28,7 @@ export default function Navbar({
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -44,28 +42,26 @@ export default function Navbar({
     { name: "اتصل بنا", href: "#contact" },
   ];
 
-  const cleanPhone = phoneNumber.replace(/\s+/g, "");
-
   return (
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
             ? "bg-madar-dark/95 backdrop-blur-md py-3 shadow-lg border-b border-madar-cardBorder/60"
-            : "bg-transparent py-5"
+            : "bg-transparent py-4 sm:py-5"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             {/* Official Logo */}
-            <Link href="/" className="flex items-center gap-3 group py-1">
+            <Link href="/" className="flex items-center gap-3 group py-1 shrink-0">
               <Image
                 src="/logo-white.png"
                 alt="شعار مدار للنقل البري - Madar Logistics & Transport"
-                width={180}
-                height={75}
+                width={170}
+                height={70}
                 priority
-                className="h-10 sm:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-md"
+                className="h-9 sm:h-11 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-md"
               />
             </Link>
 
@@ -82,27 +78,14 @@ export default function Navbar({
               ))}
             </nav>
 
-            {/* Action Buttons */}
-            <div className="hidden sm:flex items-center gap-2.5">
-              {/* Direct Phone Call Button (فون مباشر وليس واتساب) */}
-              <a
-                href={`tel:${cleanPhone}`}
-                className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs sm:text-sm font-bold transition-all hover:scale-105 shadow-sm"
-                title="اتصال هاتفي مباشر (فون)"
-              >
-                <Phone className="w-4 h-4 text-madar-gold" />
-                <span className="hidden xl:inline">اتصال مباشر:</span>
-                <span dir="ltr" className="inline-block font-sans tabular-nums font-bold">
-                  {phoneNumber}
-                </span>
-              </a>
-
+            {/* Action Buttons (Clean & Fast) */}
+            <div className="hidden sm:flex items-center gap-3">
               {/* WhatsApp Quick Action */}
               <a
                 href={`https://wa.me/${whatsappNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-400 border border-emerald-500/30 text-xs sm:text-sm font-semibold transition-all hover:scale-105"
+                className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-400 border border-emerald-500/30 text-xs sm:text-sm font-semibold transition-all hover:scale-105 shadow-sm min-h-[40px]"
                 title="تواصل فوري عبر واتساب"
               >
                 <span className="relative flex h-2 w-2">
@@ -113,39 +96,31 @@ export default function Navbar({
                 <span>واتساب</span>
               </a>
 
-              {/* Direct Call / Contact CTA */}
+              {/* Contact CTA */}
               <a
                 href="#contact"
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-madar-gold to-madar-goldHover text-madar-dark text-xs sm:text-sm font-bold shadow-md hover:shadow-glow-gold hover:brightness-110 transition-all"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-madar-gold to-madar-goldHover text-madar-dark text-xs sm:text-sm font-bold shadow-md hover:shadow-glow-gold hover:brightness-110 transition-all min-h-[40px]"
               >
-                <span>طلب تسعير</span>
+                <span>طلب تسعير وشحن</span>
               </a>
 
               {/* Admin Portal Quick Icon */}
               <Link
                 href="/admin"
-                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-madar-gold border border-white/5 transition-colors"
+                className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-madar-gold border border-white/5 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
                 title="لوحة الإدارة"
               >
                 <Lock className="w-4 h-4" />
               </Link>
             </div>
 
-            {/* Mobile menu button */}
+            {/* Mobile menu trigger */}
             <div className="flex items-center gap-2 lg:hidden">
-              <a
-                href={`tel:${cleanPhone}`}
-                className="p-2 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30"
-                aria-label="اتصال هاتفي مباشر"
-                title="اتصال فون"
-              >
-                <Phone className="w-5 h-5 text-madar-gold" />
-              </a>
               <a
                 href={`https://wa.me/${whatsappNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 rounded-lg bg-emerald-600/20 text-emerald-400 border border-emerald-500/30"
+                className="p-2.5 rounded-xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center min-w-[44px] min-h-[44px]"
                 aria-label="WhatsApp"
                 title="محادثة واتساب"
               >
@@ -154,7 +129,7 @@ export default function Navbar({
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2.5 rounded-xl bg-madar-navy text-slate-200 hover:text-white border border-madar-cardBorder focus:outline-none"
+                className="p-2.5 rounded-xl bg-madar-navy text-slate-200 hover:text-white border border-madar-cardBorder focus:outline-none flex items-center justify-center min-w-[44px] min-h-[44px]"
                 aria-label="القائمة الرئيسية"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6 text-madar-gold" /> : <Menu className="w-6 h-6" />}
@@ -168,19 +143,19 @@ export default function Navbar({
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-[72px] z-40 bg-madar-dark/95 backdrop-blur-xl border-b border-madar-cardBorder px-6 py-6 lg:hidden shadow-2xl"
+            className="fixed inset-x-0 top-[65px] sm:top-[72px] z-40 bg-madar-dark/98 backdrop-blur-2xl border-b border-madar-cardBorder px-5 py-5 lg:hidden shadow-2xl max-h-[calc(100dvh-70px)] overflow-y-auto"
           >
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               {navLinks.map((link) => (
                 <a
                   key={link.name}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="px-4 py-3 rounded-xl text-base font-medium text-slate-200 hover:bg-madar-navy hover:text-madar-gold transition-colors flex items-center justify-between"
+                  className="px-4 py-3 rounded-xl text-base font-medium text-slate-200 hover:bg-madar-navy hover:text-madar-gold transition-colors flex items-center justify-between min-h-[48px]"
                 >
                   <span>{link.name}</span>
                   <span className="text-xs text-slate-500">←</span>
@@ -188,36 +163,25 @@ export default function Navbar({
               ))}
 
               <div className="pt-4 mt-2 border-t border-slate-800 flex flex-col gap-3">
-                {/* Direct Phone Call Button */}
-                <a
-                  href={`tel:${cleanPhone}`}
-                  className="flex items-center justify-center gap-2 py-3 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold text-sm shadow-md"
-                >
-                  <Phone className="w-4 h-4 text-madar-gold" />
-                  <span>اتصال هاتفي مباشر (فون):</span>
-                  <span dir="ltr" className="inline-block font-sans tabular-nums font-bold">
-                    {phoneNumber}
-                  </span>
-                </a>
-
                 {/* WhatsApp Chat Button */}
                 <a
                   href={`https://wa.me/${whatsappNumber}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-600 text-white font-bold text-sm shadow-md"
+                  className="flex items-center justify-center gap-2 py-3.5 rounded-xl bg-emerald-600 text-white font-bold text-sm shadow-md min-h-[48px]"
                 >
                   <MessageSquare className="w-4 h-4" />
-                  <span>محادثة واتساب:</span>
+                  <span>محادثة واتساب مباشرة:</span>
                   <span dir="ltr" className="inline-block font-sans tabular-nums font-bold">
                     {whatsappDisplay}
                   </span>
                 </a>
 
+                {/* Contact CTA */}
                 <a
                   href="#contact"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-madar-gold to-madar-goldHover text-madar-dark font-bold text-sm"
+                  className="flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-madar-gold to-madar-goldHover text-madar-dark font-bold text-sm min-h-[48px]"
                 >
                   <span>طلب تسعير وشحن</span>
                 </a>
@@ -225,7 +189,7 @@ export default function Navbar({
                 <Link
                   href="/admin"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 py-2 text-xs text-slate-400 hover:text-madar-gold transition-colors"
+                  className="flex items-center justify-center gap-2 py-2.5 text-xs text-slate-400 hover:text-madar-gold transition-colors min-h-[40px]"
                 >
                   <Lock className="w-3.5 h-3.5" />
                   <span>دخول لوحة التحكم</span>

@@ -86,26 +86,26 @@ export default function Commitments({
             <Award className="w-4 h-4" />
             <span>{badge}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight break-words">
             {title}
           </h2>
-          <p className="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed whitespace-pre-line">
+          <p className="mt-4 text-sm sm:text-base lg:text-lg text-slate-300 leading-relaxed whitespace-pre-line">
             {subtitle}
           </p>
         </div>
 
         {/* Commitments Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {commitments.map((item, idx) => {
             const Icon = item.icon;
             return (
               <motion.div
                 key={item.id}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 25 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: idx * 0.15 }}
-                className={`glass-panel rounded-3xl p-8 relative flex flex-col justify-between border ${item.borderColor} hover:border-madar-gold/50 transition-all duration-300 group hover:-translate-y-2 hover:shadow-2xl`}
+                transition={{ duration: 0.4, delay: idx * 0.1 }}
+                className={`glass-panel rounded-3xl p-5 sm:p-8 relative flex flex-col justify-between border ${item.borderColor} hover:border-madar-gold/50 transition-all duration-300 group hover:-translate-y-2 hover:shadow-2xl`}
               >
                 {/* Number watermark */}
                 <div className="absolute top-6 left-6 text-5xl font-black text-white/5 group-hover:text-white/10 transition-colors select-none">

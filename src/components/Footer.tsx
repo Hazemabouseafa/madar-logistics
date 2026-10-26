@@ -208,14 +208,14 @@ export default function Footer({
               {companyEmail && (
                 <div className="flex items-start gap-3">
                   <Mail className="w-4 h-4 text-madar-gold shrink-0 mt-0.5" />
-                  <span>الإدارة: {companyEmail}</span>
+                  <span className="break-all">الإدارة: {companyEmail}</span>
                 </div>
               )}
 
               {salesEmail && (
                 <div className="flex items-start gap-3">
                   <Mail className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                  <span>المبيعات والعمليات: {salesEmail}</span>
+                  <span className="break-all">المبيعات والعمليات: {salesEmail}</span>
                 </div>
               )}
 

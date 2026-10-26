@@ -8,11 +8,26 @@
   --background-end-rgb: 11, 25, 44;
 }
 
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
   background: #070F1E;
   font-family: var(--font-cairo), sans-serif;
   overflow-x: hidden;
+  width: 100%;
+  position: relative;
+}
+
+/* Optimize rendering performance for long offscreen sections */
+#services, #why-us, #location, #contact {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 750px;
 }
 
 /* Custom modern scrollbar */

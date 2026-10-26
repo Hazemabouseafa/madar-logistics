@@ -56,19 +56,19 @@ export default function WhyUs() {
             <Award className="w-4 h-4" />
             <span>لماذا يختارنا كبار المصدرين والمستوردين؟</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight break-words">
             معايير احترافية تجعلنا الخيار الأول في{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-madar-gold via-amber-300 to-madar-goldHover">
               النقل البري اللوجستي
             </span>
           </h2>
-          <p className="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed">
+          <p className="mt-4 text-sm sm:text-base lg:text-lg text-slate-300 leading-relaxed">
             نجمع بين كفاءة الأسطول البري وسرعة الإجراءات لنمنح أعمالكم ميزة تنافسية واستقراراً لوجستياً دائماً.
           </p>
         </div>
 
         {/* Advantages Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
           {advantages.map((adv, idx) => {
             const Icon = adv.icon;
             return (
@@ -78,7 +78,7 @@ export default function WhyUs() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: idx * 0.1 }}
-                className="glass-panel glass-panel-hover p-6 sm:p-8 rounded-3xl border border-madar-cardBorder flex flex-col justify-between group"
+                className="glass-panel glass-panel-hover p-5 sm:p-8 rounded-3xl border border-madar-cardBorder flex flex-col justify-between group"
               >
                 <div>
                   <div className="w-12 h-12 rounded-2xl bg-madar-gold/15 border border-madar-gold/30 flex items-center justify-center text-madar-gold mb-5 group-hover:scale-110 transition-transform duration-300 shadow-md">

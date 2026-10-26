@@ -4,9 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   ThermometerSnowflake, 
-  Container, 
   Boxes, 
-  Zap, 
   CheckCircle, 
   ArrowLeft,
   Truck,
@@ -81,49 +79,49 @@ export default function ServicesSection({
   ];
 
   return (
-    <section id="services" className="py-24 bg-madar-dark relative overflow-hidden">
+    <section id="services" className="py-20 sm:py-24 bg-madar-dark relative overflow-hidden">
       {/* Background glow */}
-      <div className="absolute top-1/3 right-10 w-96 h-96 bg-madar-blue/15 rounded-full blur-[130px] pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-96 h-96 bg-madar-gold/10 rounded-full blur-[130px] pointer-events-none" />
+      <div className="absolute top-1/3 right-10 w-72 sm:w-96 h-72 sm:h-96 bg-madar-blue/15 rounded-full blur-[130px] pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-72 sm:w-96 h-72 sm:h-96 bg-madar-gold/10 rounded-full blur-[130px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Heading */}
-        <div className="text-center max-w-3xl mx-auto mb-14">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-madar-gold/10 border border-madar-gold/30 text-madar-gold text-xs sm:text-sm font-semibold mb-4">
             <Sparkles className="w-4 h-4" />
             <span>{badge}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight break-words">
             {title}
           </h2>
-          <p className="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed whitespace-pre-line">
+          <p className="mt-4 text-sm sm:text-base lg:text-lg text-slate-300 leading-relaxed whitespace-pre-line">
             {subtitle}
           </p>
 
-          {/* Interactive Toggle for Desktop/Mobile */}
-          <div className="mt-8 inline-flex p-1.5 rounded-2xl bg-madar-navy border border-madar-cardBorder shadow-lg">
+          {/* Interactive Toggle for Desktop/Mobile - 100% responsive */}
+          <div className="mt-8 max-w-md mx-auto grid grid-cols-2 p-1.5 rounded-2xl bg-madar-navy border border-madar-cardBorder shadow-lg">
             <button
               onClick={() => setActiveTab("reefer")}
-              className={`flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${
+              className={`flex items-center justify-center gap-2 px-2.5 sm:px-5 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 ${
                 activeTab === "reefer"
                   ? "bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md shadow-cyan-600/30"
                   : "text-slate-400 hover:text-white"
               }`}
             >
-              <ThermometerSnowflake className="w-4 h-4" />
-              <span>الحاويات المبردة (Reefer)</span>
+              <ThermometerSnowflake className="w-4 h-4 shrink-0" />
+              <span className="truncate">حاويات مبردة</span>
             </button>
             <button
               onClick={() => setActiveTab("dry")}
-              className={`flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${
+              className={`flex items-center justify-center gap-2 px-2.5 sm:px-5 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 ${
                 activeTab === "dry"
                   ? "bg-gradient-to-r from-madar-gold to-madar-goldHover text-madar-dark shadow-md shadow-amber-500/20"
                   : "text-slate-400 hover:text-white"
               }`}
             >
-              <Boxes className="w-4 h-4" />
-              <span>الحاويات الجافة (Dry)</span>
+              <Boxes className="w-4 h-4 shrink-0" />
+              <span className="truncate">حاويات جافة</span>
             </button>
           </div>
         </div>
@@ -136,27 +134,27 @@ export default function ServicesSection({
           return (
             <motion.div
               key={svc.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="glass-panel rounded-3xl p-6 sm:p-10 lg:p-12 border border-madar-cardBorder relative shadow-2xl overflow-hidden"
+              transition={{ duration: 0.3 }}
+              className="glass-panel rounded-3xl p-5 sm:p-8 lg:p-12 border border-madar-cardBorder relative shadow-2xl overflow-hidden"
             >
               {/* Header inside card */}
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 border-b border-white/10">
-                <div className="flex items-start sm:items-center gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-6 sm:pb-8 border-b border-white/10">
+                <div className="flex items-start sm:items-center gap-3.5 sm:gap-4">
                   <div
-                    className={`w-16 h-16 rounded-2xl ${
+                    className={`w-13 h-13 sm:w-16 sm:h-16 rounded-2xl ${
                       svc.id === "reefer"
                         ? "bg-cyan-500/15 border-cyan-500/30 text-cyan-400"
                         : "bg-madar-gold/15 border-madar-gold/30 text-madar-gold"
-                    } border flex items-center justify-center shrink-0 shadow-lg`}
+                    } border flex items-center justify-center shrink-0 shadow-lg p-3 sm:p-0`}
                   >
-                    <Icon className="w-8 h-8" />
+                    <Icon className="w-7 h-7 sm:w-8 sm:h-8" />
                   </div>
                   <div>
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <h3 className="text-2xl sm:text-3xl font-black text-white">{svc.title}</h3>
-                      <span className={`text-xs font-bold px-3 py-1 rounded-full border ${svc.tagColor}`}>
+                    <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                      <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white">{svc.title}</h3>
+                      <span className={`text-[11px] sm:text-xs font-bold px-2.5 py-0.5 sm:py-1 rounded-full border ${svc.tagColor}`}>
                         {svc.tag}
                       </span>
                     </div>
@@ -166,7 +164,7 @@ export default function ServicesSection({
 
                 <a
                   href="#contact"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-madar-gold text-madar-dark font-extrabold text-sm hover:brightness-110 shadow-md hover:scale-105 transition-all self-start lg:self-auto"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl bg-madar-gold text-madar-dark font-extrabold text-xs sm:text-sm hover:brightness-110 shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all text-center shrink-0"
                 >
                   <span>طلب تسعير هذه الخدمة</span>
                   <ArrowLeft className="w-4 h-4" />
@@ -174,26 +172,26 @@ export default function ServicesSection({
               </div>
 
               {/* Description */}
-              <div className="py-6">
-                <p className="text-base sm:text-lg text-slate-200 leading-relaxed font-normal">
+              <div className="py-5 sm:py-6">
+                <p className="text-sm sm:text-base lg:text-lg text-slate-200 leading-relaxed font-normal">
                   {svc.description}
                 </p>
               </div>
 
               {/* Grid: Specifications & Features */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-4">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 pt-2">
                 
                 {/* Tech Specs */}
                 <div className="lg:col-span-6 space-y-3">
-                  <h4 className="text-sm font-bold text-madar-gold tracking-wide uppercase flex items-center gap-2 mb-4">
+                  <h4 className="text-xs sm:text-sm font-bold text-madar-gold tracking-wide uppercase flex items-center gap-2 mb-3">
                     <Layers className="w-4 h-4" />
                     <span>المواصفات الفنية والتجهيزات</span>
                   </h4>
-                  <div className="space-y-3">
+                  <div className="space-y-2.5">
                     {svc.specs.map((sp, sIdx) => (
                       <div
                         key={sIdx}
-                        className="p-4 rounded-xl bg-madar-navy/60 border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                        className="p-3.5 sm:p-4 rounded-xl bg-madar-navy/60 border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2"
                       >
                         <span className="text-xs sm:text-sm text-slate-400 font-medium">{sp.label}</span>
                         <span className="text-xs sm:text-sm font-bold text-white text-right sm:text-left">
@@ -206,17 +204,17 @@ export default function ServicesSection({
 
                 {/* Features & Guarantees */}
                 <div className="lg:col-span-6 space-y-3">
-                  <h4 className="text-sm font-bold text-madar-gold tracking-wide uppercase flex items-center gap-2 mb-4">
+                  <h4 className="text-xs sm:text-sm font-bold text-madar-gold tracking-wide uppercase flex items-center gap-2 mb-3">
                     <CheckCircle className="w-4 h-4" />
                     <span>مميزات الخدمة وضمانات التنفيذ</span>
                   </h4>
-                  <div className="space-y-3">
+                  <div className="space-y-2.5">
                     {svc.features.map((feat, fIdx) => (
                       <div
                         key={fIdx}
-                        className="p-4 rounded-xl bg-madar-navy/60 border border-white/5 flex items-start gap-3"
+                        className="p-3.5 sm:p-4 rounded-xl bg-madar-navy/60 border border-white/5 flex items-start gap-2.5 sm:gap-3"
                       >
-                        <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                        <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 shrink-0 mt-0.5" />
                         <span className="text-xs sm:text-sm text-slate-200 leading-relaxed font-medium">
                           {feat}
                         </span>
@@ -231,13 +229,13 @@ export default function ServicesSection({
         })}
 
         {/* Quick summary banner for other logistical capabilities */}
-        <div className="mt-12 glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-              <Truck className="w-6 h-6 text-madar-gold" />
+        <div className="mt-10 sm:mt-12 glass-panel p-5 sm:p-8 rounded-3xl border border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6">
+          <div className="flex items-start sm:items-center gap-3.5 sm:gap-4">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+              <Truck className="w-5 h-5 sm:w-6 sm:h-6 text-madar-gold" />
             </div>
             <div>
-              <h4 className="text-base sm:text-lg font-bold text-white">
+              <h4 className="text-sm sm:text-base lg:text-lg font-bold text-white">
                 هل لديك شحنة خاصة، صب جاف، أو متطلبات نقل لوجستي محددة؟
               </h4>
               <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
@@ -247,7 +245,7 @@ export default function ServicesSection({
           </div>
           <a
             href="#contact"
-            className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/20 text-sm font-bold transition-all shrink-0"
+            className="w-full md:w-auto text-center px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/20 text-xs sm:text-sm font-bold transition-all shrink-0"
           >
             استشارة لوجستية مجانية
           </a>
