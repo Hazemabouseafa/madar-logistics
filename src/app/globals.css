@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 241, 245, 249;
+  --background-start-rgb: 7, 15, 30;
+  --background-end-rgb: 11, 25, 44;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: #070F1E;
+  font-family: var(--font-cairo), sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom modern scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #070F1E;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E3E62;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #F59E0B;
+}
+
+/* Maritime grid background */
+.bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+/* Maritime glow utilities */
+.glow-gold {
+  box-shadow: 0 0 35px -5px rgba(245, 158, 11, 0.25);
+}
+
+.glow-blue {
+  box-shadow: 0 0 45px -5px rgba(30, 62, 98, 0.45);
+}
+
+/* Glassmorphism panel */
+.glass-panel {
+  background: rgba(15, 32, 56, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-hover:hover {
+  background: rgba(22, 44, 76, 0.85);
+  border-color: rgba(245, 158, 11, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+/* Form input styling */
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: #F59E0B !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2) !important;
+}

@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  madar-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: madar-logistics-web
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - DATABASE_URL=${DATABASE_URL:-}
+      - JWT_SECRET=${JWT_SECRET:-madar-secure-production-jwt-key-2025}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+    volumes:
+      - madar_data:/app/.data
+
+volumes:
+  madar_data:
