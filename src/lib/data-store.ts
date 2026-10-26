@@ -3,6 +3,7 @@ import path from "path";
 import bcrypt from "bcryptjs";
 import { ContactMessage, MessageStatus, SiteSettings, DashboardStats } from "./types";
 import { DEFAULT_SETTINGS } from "./default-settings";
+import prisma from "./db";
 
 // Local storage directory fallback
 const DATA_DIR = path.join(process.cwd(), ".data");
@@ -80,6 +81,45 @@ function writeJsonFile<T>(filePath: string, data: T): void {
 // Messages Management
 // ---------------------------------------------------------------------------
 export async function getMessages(filters?: { status?: string; search?: string }): Promise<ContactMessage[]> {
+  // 1. Try PostgreSQL Database
+  if (process.env.DATABASE_URL) {
+    try {
+      const where: any = {};
+      if (filters?.status && filters.status !== "ALL") {
+        where.status = filters.status;
+      }
+      if (filters?.search && filters.search.trim()) {
+        const q = filters.search.trim();
+        where.OR = [
+          { name: { contains: q, mode: "insensitive" } },
+          { phone: { contains: q } },
+          { serviceType: { contains: q, mode: "insensitive" } },
+          { message: { contains: q, mode: "insensitive" } },
+        ];
+      }
+      const dbMessages = await prisma.message.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+      });
+      if (dbMessages && dbMessages.length > 0) {
+        return dbMessages.map((m) => ({
+          id: m.id,
+          name: m.name,
+          phone: m.phone,
+          serviceType: m.serviceType,
+          message: m.message,
+          status: m.status as MessageStatus,
+          notes: m.notes,
+          createdAt: m.createdAt.toISOString(),
+          updatedAt: m.updatedAt.toISOString(),
+        }));
+      }
+    } catch {
+      // Fallback silently to local store
+    }
+  }
+
+  // 2. Fallback to Local Persistent File Store
   const messages = readJsonFile<ContactMessage[]>(MESSAGES_FILE, INITIAL_MESSAGES);
   let result = [...messages];
 
@@ -102,6 +142,27 @@ export async function getMessages(filters?: { status?: string; search?: string }
 }
 
 export async function getMessageById(id: string): Promise<ContactMessage | null> {
+  if (process.env.DATABASE_URL) {
+    try {
+      const dbMsg = await prisma.message.findUnique({ where: { id } });
+      if (dbMsg) {
+        return {
+          id: dbMsg.id,
+          name: dbMsg.name,
+          phone: dbMsg.phone,
+          serviceType: dbMsg.serviceType,
+          message: dbMsg.message,
+          status: dbMsg.status as MessageStatus,
+          notes: dbMsg.notes,
+          createdAt: dbMsg.createdAt.toISOString(),
+          updatedAt: dbMsg.updatedAt.toISOString(),
+        };
+      }
+    } catch {
+      // Fallback
+    }
+  }
+
   const messages = readJsonFile<ContactMessage[]>(MESSAGES_FILE, INITIAL_MESSAGES);
   return messages.find((m) => m.id === id) || null;
 }
@@ -112,9 +173,9 @@ export async function createMessage(input: {
   serviceType: string;
   message: string;
 }): Promise<ContactMessage> {
-  const messages = readJsonFile<ContactMessage[]>(MESSAGES_FILE, INITIAL_MESSAGES);
-  const newMessage: ContactMessage = {
-    id: `msg_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+  const localId = `msg_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+  let savedMessage: ContactMessage = {
+    id: localId,
     name: input.name.trim(),
     phone: input.phone.trim(),
     serviceType: input.serviceType.trim(),
@@ -125,9 +186,40 @@ export async function createMessage(input: {
     updatedAt: new Date().toISOString(),
   };
 
-  messages.unshift(newMessage);
+  // Try PostgreSQL
+  if (process.env.DATABASE_URL) {
+    try {
+      const dbMsg = await prisma.message.create({
+        data: {
+          name: input.name.trim(),
+          phone: input.phone.trim(),
+          serviceType: input.serviceType.trim(),
+          message: input.message.trim(),
+          status: "NEW",
+        },
+      });
+      savedMessage = {
+        id: dbMsg.id,
+        name: dbMsg.name,
+        phone: dbMsg.phone,
+        serviceType: dbMsg.serviceType,
+        message: dbMsg.message,
+        status: dbMsg.status as MessageStatus,
+        notes: dbMsg.notes,
+        createdAt: dbMsg.createdAt.toISOString(),
+        updatedAt: dbMsg.updatedAt.toISOString(),
+      };
+    } catch {
+      // Fallback to local
+    }
+  }
+
+  // Always mirror to local backup
+  const messages = readJsonFile<ContactMessage[]>(MESSAGES_FILE, INITIAL_MESSAGES);
+  messages.unshift(savedMessage);
   writeJsonFile(MESSAGES_FILE, messages);
-  return newMessage;
+
+  return savedMessage;
 }
 
 export async function updateMessageStatus(
@@ -135,34 +227,96 @@ export async function updateMessageStatus(
   status: MessageStatus,
   notes?: string
 ): Promise<ContactMessage | null> {
+  let updatedMsg: ContactMessage | null = null;
+
+  if (process.env.DATABASE_URL) {
+    try {
+      const dbMsg = await prisma.message.update({
+        where: { id },
+        data: {
+          status,
+          notes: notes !== undefined ? notes : undefined,
+        },
+      });
+      updatedMsg = {
+        id: dbMsg.id,
+        name: dbMsg.name,
+        phone: dbMsg.phone,
+        serviceType: dbMsg.serviceType,
+        message: dbMsg.message,
+        status: dbMsg.status as MessageStatus,
+        notes: dbMsg.notes,
+        createdAt: dbMsg.createdAt.toISOString(),
+        updatedAt: dbMsg.updatedAt.toISOString(),
+      };
+    } catch {
+      // Fallback
+    }
+  }
+
+  // Update in local file
   const messages = readJsonFile<ContactMessage[]>(MESSAGES_FILE, INITIAL_MESSAGES);
   const index = messages.findIndex((m) => m.id === id);
-  if (index === -1) return null;
+  if (index !== -1) {
+    messages[index] = {
+      ...messages[index],
+      status,
+      notes: notes !== undefined ? notes : messages[index].notes,
+      updatedAt: new Date().toISOString(),
+    };
+    writeJsonFile(MESSAGES_FILE, messages);
+    if (!updatedMsg) updatedMsg = messages[index];
+  }
 
-  messages[index] = {
-    ...messages[index],
-    status,
-    notes: notes !== undefined ? notes : messages[index].notes,
-    updatedAt: new Date().toISOString(),
-  };
-
-  writeJsonFile(MESSAGES_FILE, messages);
-  return messages[index];
+  return updatedMsg;
 }
 
 export async function deleteMessage(id: string): Promise<boolean> {
+  let deleted = false;
+
+  if (process.env.DATABASE_URL) {
+    try {
+      await prisma.message.delete({ where: { id } });
+      deleted = true;
+    } catch {
+      // Fallback
+    }
+  }
+
   const messages = readJsonFile<ContactMessage[]>(MESSAGES_FILE, INITIAL_MESSAGES);
   const filtered = messages.filter((m) => m.id !== id);
-  if (filtered.length === messages.length) return false;
+  if (filtered.length !== messages.length) {
+    writeJsonFile(MESSAGES_FILE, filtered);
+    deleted = true;
+  }
 
-  writeJsonFile(MESSAGES_FILE, filtered);
-  return true;
+  return deleted;
 }
 
 // ---------------------------------------------------------------------------
 // Global Settings Management
 // ---------------------------------------------------------------------------
 export async function getSiteSettings(): Promise<SiteSettings> {
+  if (process.env.DATABASE_URL) {
+    try {
+      const row = await prisma.setting.findUnique({
+        where: { key: "site_settings" },
+      });
+      if (row && row.value) {
+        const parsed = JSON.parse(row.value);
+        return {
+          ...DEFAULT_SETTINGS,
+          ...parsed,
+          ports_list: Array.isArray(parsed.ports_list) && parsed.ports_list.length > 0 
+            ? parsed.ports_list 
+            : DEFAULT_SETTINGS.ports_list,
+        };
+      }
+    } catch {
+      // Fallback
+    }
+  }
+
   const saved = readJsonFile<Partial<SiteSettings>>(SETTINGS_FILE, DEFAULT_SETTINGS);
   return {
     ...DEFAULT_SETTINGS,
@@ -179,7 +333,30 @@ export async function updateSiteSettings(updates: Partial<SiteSettings>): Promis
     ...current,
     ...updates,
   };
+
+  // Always save to persistent JSON
   writeJsonFile(SETTINGS_FILE, merged);
+
+  // Sync to PostgreSQL if connected
+  if (process.env.DATABASE_URL) {
+    try {
+      await prisma.setting.upsert({
+        where: { key: "site_settings" },
+        update: {
+          value: JSON.stringify(merged),
+          description: "Global site configuration and CMS copy",
+        },
+        create: {
+          key: "site_settings",
+          value: JSON.stringify(merged),
+          description: "Global site configuration and CMS copy",
+        },
+      });
+    } catch {
+      // Fallback
+    }
+  }
+
   return merged;
 }
 
@@ -196,7 +373,32 @@ const DEFAULT_ADMIN = {
 };
 
 export async function verifyAdminCredentials(email: string, pass: string) {
-  if (email.trim().toLowerCase() === DEFAULT_ADMIN.email.toLowerCase()) {
+  const normalizedEmail = email.trim().toLowerCase();
+
+  // 1. Try PostgreSQL AdminUser
+  if (process.env.DATABASE_URL) {
+    try {
+      const dbAdmin = await prisma.adminUser.findUnique({
+        where: { email: normalizedEmail },
+      });
+      if (dbAdmin) {
+        const valid = bcrypt.compareSync(pass, dbAdmin.passwordHash);
+        if (valid) {
+          return {
+            id: dbAdmin.id,
+            email: dbAdmin.email,
+            name: dbAdmin.name,
+            role: dbAdmin.role,
+          };
+        }
+      }
+    } catch {
+      // Fallback
+    }
+  }
+
+  // 2. Default superadmin fallback
+  if (normalizedEmail === DEFAULT_ADMIN.email.toLowerCase()) {
     const valid = bcrypt.compareSync(pass, DEFAULT_ADMIN.passwordHash);
     if (valid) {
       return {

@@ -1,49 +1,55 @@
-# دليل النشر المباشر على خادم VPS باستخدام Coolify
-## منصة مدار للنقل البري واللوجستيات (Madar Logistics)
+# دليل تشغيل قاعدة البيانات والنشر على خادم VPS محلياً باستخدام Coolify
+## منصة مدار للنقل البري (Madar Logistics and Transportation)
 
-هذا المشروع مهيأ بالكامل للنشر بنقرة واحدة (1-Click Deployment) على أي خادم VPS عبر لوحة التحكم الشهيرة **Coolify** باستخدام تقنية الـ Multi-Stage Docker Containerized Standalone.
-
----
-
-## 🌟 مميزات بيئة النشر في المشروع:
-1. **Containerized Standalone Mode**: أصغر حجم للحاوية مع زمن إقلاع فائق السرعة عبر Next.js Standalone.
-2. **Persistent Storage (مساحة تخزين دائمة)**: حتى في حال عدم استخدام قاعدة بيانات خارجية، تم ربط مجلد `.data` كـ Docker Volume (`madar_data`) لضمان عدم ضياع أي تعديلات في المحتوى أو الرسائل الواردة عند إعادة تشغيل الحاوية.
-3. **Dual-Database Support**: جاهز للربط الفوري مع Neon PostgreSQL أو PostgreSQL المنشأ داخل Coolify، أو العمل تلقائياً بالتخزين الدائم.
-4. **أمان معزز**: يعمل التطبيق داخل الحاوية تحت مستخدم غير جذري آمن (`nextjs:nodejs UID 1001`).
+قاعدة البيانات مصممة ومجهزة لتعمل **محلياً بنسبة 100% على نفس سيرفر الـ VPS الخاص بك (Self-Hosted Local Database)**، دون الحاجة لأي خدمات سحابية خارجية (مثل Neon أو Supabase أو AWS).
 
 ---
 
-## 🚀 خطوات النشر على Coolify (خطوة بخطوة):
+## 🏗 خيارات تشغيل قاعدة البيانات محلياً على الـ VPS:
 
-### 1. إضافة المشروع في Coolify:
-- في لوحة تحكم Coolify، اختر مشروعك ثم اضغط **+ New Resource**.
-- اختر **Public Repository** أو **Private Repository** (GitHub / GitLab).
-- الصق رابط مستودع الكود الخاص بشركة مدار.
+### 🌟 الخيار الأول (الأسهل والأسرع): النشر عبر Docker Compose المدمج
+يحتوي المشروع على ملف `docker-compose.yml` يطلق حاويتين متكاملتين معاً على الـ VPS:
+1. **`madar-postgres`**: حاوية PostgreSQL 16 Alpine محلية تماماً على السيرفر، مع مجلد تخزين دائم (`postgres_data`) على قرص الـ VPS، وملف تهيئة تلقائي (`prisma/init.sql`) ينشئ الجداول والمستخدم الرئيسي فوراً.
+2. **`madar-web`**: تطبيق Next.js الذي يتصل محلياً بحاوية البوستجرس عبر الشبكة الداخلية (`madar_network`).
 
-### 2. نوع البناء (Build Pack):
-- في خانة **Build Pack**، اختر **Dockerfile** (سيكتشف Coolify ملف `Dockerfile` تلقائياً من المجلد الرئيسي).
-- المنفذ الداخلي للتطبيق هو: `3000` (Coolify Port: `3000`).
+#### خطوات التشغيل بالخيار الأول في Coolify:
+1. في لوحة تحكم Coolify، اختر مشروعك ثم اضغط **+ New Resource**.
+2. اختر **Docker Compose**.
+3. حدد مستودع المشروع `https://github.com/Hazemabouseafa/madar-logistics` فرع `main`.
+4. سيتعرف Coolify فورياً على `docker-compose.yml` ويقوم بتشغيل قاعدة البيانات والتطبيق محلياً على الـ VPS.
+5. اضغط **Deploy** وسيعمل كل شيء محلياً بدون أي إعدادات إضافية!
 
-### 3. المتغيرات البيئية (Environment Variables):
-في تبويب **Environment Variables** في Coolify، يمكنك إضافة:
-```env
-NODE_ENV=production
-PORT=3000
-HOSTNAME=0.0.0.0
-JWT_SECRET=ضع_هنا_كلمة_سر_مشفرة_عشوائية_للجلسات
-NEXT_PUBLIC_APP_URL=https://your-domain.com
+---
 
-# اختياري: إذا كان لديك قاعدة بيانات PostgreSQL على Coolify أو Neon:
-DATABASE_URL=postgresql://user:password@host:5432/madar_db
-```
+### 🌟 الخيار الثاني: تشغيل قاعدة بيانات PostgreSQL منفصلة داخل Coolify
+إذا كنت تفضل إدارة قواعد البيانات بشكل مستقل داخل Coolify:
 
-### 4. حفظ البيانات (Persistent Storage / Volumes):
-في تبويب **Storages** في Coolify:
-- اضغط **Add Storage**.
-- أدخل المسار داخل الحاوية (Destination Path): `/app/.data`
-- هذا يضمن استمرار حفظ الرسائل والـ CMS والإعدادات بشكل دائم ومستقر.
+1. **إنشاء قاعدة البيانات المحلية**:
+   - داخل Coolify، اضغط **+ New Resource** ثم اختر **Databases** -> **PostgreSQL**.
+   - سمّها مثلاً: `madar-local-db`.
+   - سيقوم Coolify بتشغيل PostgreSQL على سيرفر الـ VPS الخاص بك وتوليد رابط اتصال داخلي محلي (Internal Connection String) مثل:
+     ```
+     postgresql://postgres:password@madar-local-db:5432/postgres
+     ```
 
-### 5. النشر (Deploy):
-- اضغط على زر **Deploy**.
-- سيقوم Coolify ببناء الحاوية وتفعيل شهادة الـ SSL المجانية (HTTPS) تلقائياً عبر Traefik.
-- مبروك! موقعك ولوحة التحكم يعملان بكفاءة وسرعة فائقة.
+2. **ربط التطبيق بقاعدة البيانات المحلية**:
+   - في تطبيق الويب `madar-web`، ادخل إلى تبويب **Environment Variables**.
+   - أضف المتغير:
+     ```env
+     DATABASE_URL=postgresql://postgres:password@madar-local-db:5432/postgres
+     ```
+   - اضغط **Deploy**.
+
+---
+
+## 🔒 أمان واستقرار البيانات المحلية (Data Persistence):
+- **مجلد التخزين الدائم (Persistent Volume)**: يتم تخزين كافة البيانات والجداول والرسائل على قرص الـ VPS عبر Volume دائم باسم `madar_postgres_data`.
+- حتى لو تم إيقاف الحاوية أو إعادة تشغيل سيرفر الـ VPS أو تحديث الكود، تظل جميع بيانات العملاء وحجوزاتهم ورسائلهم وإعدادات لوحة التحكم محفوظة تماماً دون أي مساس بها.
+- **نسخ احتياطي فوري متزامن (Dual-Sync)**: يحفظ التطبيق نسخة متزامنة فورية من الرسائل والإعدادات في ملفات JSON محلية، مما يضمن عمل الموقع حتى في أصعب ظروف الصيانة لقاعدة البيانات.
+
+---
+
+## 🔑 بيانات تسجيل الدخول الافتراضية للوحة التحكم:
+- الرابط: `https://your-domain/admin/login` (أو `http://localhost:3000/admin/login`)
+- البريد: `admin@madartrans.com`
+- كلمة المرور: `MadarAdmin2025!`

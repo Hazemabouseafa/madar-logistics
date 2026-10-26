@@ -1,23 +1,62 @@
 version: "3.8"
 
 services:
+  # -------------------------------------------------------------
+  # 1. Local PostgreSQL Database running directly on the VPS
+  # -------------------------------------------------------------
+  madar-postgres:
+    image: postgres:16-alpine
+    container_name: madar-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-madar_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-madar_secure_password_2025}
+      POSTGRES_DB: ${POSTGRES_DB:-madar_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./prisma/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-madar_user} -d ${POSTGRES_DB:-madar_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - madar_network
+
+  # -------------------------------------------------------------
+  # 2. Next.js Web Application & Admin Dashboard
+  # -------------------------------------------------------------
   madar-web:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: madar-logistics-web
     restart: always
+    depends_on:
+      madar-postgres:
+        condition: service_healthy
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
       - PORT=3000
       - HOSTNAME=0.0.0.0
-      - DATABASE_URL=${DATABASE_URL:-}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-madar_user}:${POSTGRES_PASSWORD:-madar_secure_password_2025}@madar-postgres:5432/${POSTGRES_DB:-madar_db}
       - JWT_SECRET=${JWT_SECRET:-madar-secure-production-jwt-key-2025}
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
     volumes:
       - madar_data:/app/.data
+    networks:
+      - madar_network
 
 volumes:
+  postgres_data:
+    name: madar_postgres_data
   madar_data:
+    name: madar_app_data
+
+networks:
+  madar_network:
+    name: madar_network
