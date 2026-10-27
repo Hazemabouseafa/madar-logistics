@@ -3,13 +3,13 @@ import { SiteSettings } from "./types";
 export const DEFAULT_SETTINGS: SiteSettings = {
   whatsapp_number: "201050028330",
   whatsapp_display: "+20 10 50028330",
-  google_maps_url: "https://maps.app.goo.gl/WtFERuC1uf81Yzns8?g_st=iw",
+  google_maps_url: "https://maps.google.com/?q=31.4422793,31.7658919&entry=gps&shh=CAE&lucs=,94297699,94231188,94280568,100821555,47071704,94218641,94282134,100835694,100840646,94286869,100820247,100822504,100838877,121816461&g_st=iw",
   phone_number: "+20 10 50028330",
   // Exactly 2 official emails
   company_email: "info@madartrans.com",
   sales_email: "sales@madartrans.com",
-  address_ar: "جمهورية مصر العربية - مكاتب الشحن وخدمات الموانئ البحرية (الإسكندرية، الدخيلة، دمياط، بورسعيد، السخنة)",
-  address_en: "Egypt - Seaport Transport Hubs (Alexandria, El-Dekheila, Damietta, Port Said, Sokhna)",
+  address_ar: "جمهورية مصر العربية - مكاتب الشحن وخدمات الموانئ البحرية (دمياط، بورسعيد، الإسكندرية، الدخيلة، السخنة)",
+  address_en: "Egypt - Seaport Transport Hubs (Damietta, Port Said, Alexandria, El-Dekheila, Sokhna)",
   working_hours: "السبت - الخميس: 8:00 ص - 6:00 م (خدمة الطوارئ وغرفة العمليات 24/7)",
   about_summary: "شركة مدار للنقل البري (Madar Logistics and Transportation) رائدة في نقل الحاويات المبردة والجافة من وإلى الموانئ البحرية مع الالتزام التام بالمواعيد وسلامة الشحنات ودقة المستندات.",
 
@@ -49,10 +49,10 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   ports_card_callout_subtitle: "جاهزية فورية للنقل والمناولة",
   ports_card_cta: "احجز الآن",
   ports_list: [
-    { name: "ميناء الإسكندرية البحري", role: "البوابة الرئيسية للتجارة المتوسطية" },
-    { name: "ميناء الدخيلة", role: "محطة الحاويات العملاقة والصب الجاف" },
     { name: "ميناء دمياط", role: "مركز الربط اللوجستي للدلتا والقاهرة" },
     { name: "ميناء بورسعيد وشرق بورسعيد", role: "شريان قناة السويس المحوري" },
+    { name: "ميناء الإسكندرية البحري", role: "البوابة الرئيسية للتجارة المتوسطية" },
+    { name: "ميناء الدخيلة", role: "محطة الحاويات العملاقة والصب الجاف" },
     { name: "ميناء السخنة والأدبية", role: "بوابة البحر الأحمر والاستيراد الآسيوي" },
   ],
 

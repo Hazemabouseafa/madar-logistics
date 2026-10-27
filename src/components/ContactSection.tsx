@@ -31,7 +31,7 @@ export default function ContactSection({
   whatsappNumber = "201050028330",
   whatsappDisplay = "+20 10 50028330",
   phoneNumber = "+20 10 50028330",
-  addressAr = "جمهورية مصر العربية - مكاتب الشحن وخدمات الموانئ البحرية",
+  addressAr = "جمهورية مصر العربية - مكاتب الشحن وخدمات الموانئ البحرية (دمياط، بورسعيد، الإسكندرية، الدخيلة، السخنة)",
   workingHours = "السبت - الخميس: 8:00 ص - 6:00 م (خدمة الطوارئ وغرفة العمليات 24/7)",
   companyEmail = "info@madartrans.com",
   salesEmail = "sales@madartrans.com",
