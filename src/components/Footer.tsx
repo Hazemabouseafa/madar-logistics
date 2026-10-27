@@ -15,6 +15,7 @@ interface FooterProps {
   linkedinUrl?: string;
   instagramUrl?: string;
   twitterUrl?: string;
+  threadsUrl?: string;
 }
 
 export default function Footer({
@@ -26,10 +27,11 @@ export default function Footer({
   salesEmail = "sales@madartrans.com",
   addressAr = "جمهورية مصر العربية - مكاتب الشحن وخدمات الموانئ البحرية (دمياط، بورسعيد، الإسكندرية، الدخيلة، السخنة)",
   workingHours = "السبت - الخميس: 8:00 ص - 6:00 م (خدمة الطوارئ وغرفة العمليات 24/7)",
-  facebookUrl = "https://facebook.com/madartrans",
+  facebookUrl = "https://www.facebook.com/share/1F9AYgEgWy/?mibextid=wwXIfr",
   linkedinUrl = "https://linkedin.com/company/madartrans",
-  instagramUrl = "https://instagram.com/madartrans",
+  instagramUrl = "https://www.instagram.com/madar.t23?xtok=Zmxlc25na2hhczBt&utm_source=qr",
   twitterUrl = "https://x.com/madartrans",
+  threadsUrl = "https://www.threads.com/@madar.t23?igshid=NTc4MTIwNjQ2YQ==",
 }: FooterProps) {
   const cleanPhone = phoneNumber.replace(/\s+/g, "");
 
@@ -135,6 +137,19 @@ export default function Footer({
                 >
                   <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                </a>
+              )}
+              {threadsUrl && (
+                <a
+                  href={threadsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 rounded-xl bg-white/5 hover:bg-slate-700/40 text-slate-300 hover:text-white border border-white/10 flex items-center justify-center transition-all"
+                  title="ثريدز (Threads)"
+                >
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 192 192">
+                    <path d="M141.537 88.9883C140.71 88.5919 139.87 88.2104 139.019 87.8451C137.537 60.5382 122.616 44.905 97.5619 44.745C97.4484 44.7443 97.3355 44.7443 97.222 44.7443C82.2364 44.7443 69.7731 51.1409 62.102 62.7807L75.3813 72.813C80.826 64.5519 89.284 60.5284 97.228 60.5284C97.3094 60.5284 97.3908 60.5284 97.4722 60.5298C110.158 60.6121 119.528 68.6185 121.737 86.8182C114.195 85.5532 106.079 85.3438 97.6436 86.1887C68.9959 89.0573 52.1287 105.105 52.8872 125.794C53.6456 146.483 71.745 159.988 95.0483 159.988C115.759 159.988 128.537 149.336 134.464 137.334C139.467 147.458 148.653 153.842 161.42 153.842C178.694 153.842 188.47 138.647 188.47 114.072C188.47 80.3541 166.42 45.419 123.635 34.629C85.5397 25.0232 46.1039 37.9547 28.5582 66.8622C11.3323 95.2393 11.5976 132.88 29.2152 161.642C43.3444 184.707 68.7997 197.801 97.0518 197.801C121.579 197.801 144.57 187.358 158.423 169.578L145.462 157.733C134.368 171.97 116.143 180.257 97.0518 180.257C74.6279 180.257 54.3416 169.839 43.0805 151.455C28.7186 127.994 28.5085 97.2346 42.5484 74.0955C57.0694 50.1479 89.4443 39.5286 120.093 47.2574C154.512 55.9333 171.926 84.4447 171.926 114.072C171.926 130.407 165.719 137.904 157.94 137.904C150.316 137.904 144.382 132.748 141.317 122.951C145.247 112.515 146.368 100.999 141.537 88.9883ZM118.529 128.52C113.883 138.868 105.787 144.051 95.0483 144.051C80.0864 144.051 69.4146 134.863 68.9193 121.364C68.424 107.865 79.5298 96.9806 100.672 94.8629C106.84 94.2443 112.875 94.5517 118.665 95.7334C120.301 107.017 119.782 118.497 118.529 128.52Z" />
                   </svg>
                 </a>
               )}

@@ -111,6 +111,7 @@ export default async function HomePage() {
         linkedinUrl={settings.linkedin_url}
         instagramUrl={settings.instagram_url}
         twitterUrl={settings.twitter_url}
+        threadsUrl={settings.threads_url}
       />
 
       {/* Floating Interactive WhatsApp Widget */}

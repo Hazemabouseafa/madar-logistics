@@ -14,10 +14,11 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   about_summary: "شركة مدار للنقل البري (Madar Logistics and Transportation) رائدة في نقل الحاويات المبردة والجافة من وإلى الموانئ البحرية مع الالتزام التام بالمواعيد وسلامة الشحنات ودقة المستندات.",
 
   // Social Media Links
-  facebook_url: "https://facebook.com/madartrans",
+  facebook_url: "https://www.facebook.com/share/1F9AYgEgWy/?mibextid=wwXIfr",
   linkedin_url: "https://linkedin.com/company/madartrans",
-  instagram_url: "https://instagram.com/madartrans",
+  instagram_url: "https://www.instagram.com/madar.t23?xtok=Zmxlc25na2hhczBt&utm_source=qr",
   twitter_url: "https://x.com/madartrans",
+  threads_url: "https://www.threads.com/@madar.t23?igshid=NTc4MTIwNjQ2YQ==",
 
   // Landing Page Content
   hero_badge: "النقل البري الاحترافي من وإلى كافة الموانئ البحرية [ حاويات مبردة & جافة ]",

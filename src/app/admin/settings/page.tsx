@@ -929,6 +929,25 @@ export default function AdminSettingsPage() {
                   className="w-full px-4 py-3 rounded-xl bg-madar-dark border border-madar-cardBorder text-white text-sm font-mono dir-ltr text-right"
                 />
               </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-300 mb-2 flex items-center justify-between">
+                  <span>حساب منصة ثريدز (Threads URL)</span>
+                  {settings.threads_url && (
+                    <a href={settings.threads_url} target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:underline flex items-center gap-1 font-normal">
+                      <span>فتح الرابط</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </label>
+                <input
+                  type="url"
+                  value={settings.threads_url || ""}
+                  onChange={(e) => setSettings({ ...settings, threads_url: e.target.value })}
+                  placeholder="https://www.threads.com/@madar.t23"
+                  className="w-full px-4 py-3 rounded-xl bg-madar-dark border border-madar-cardBorder text-white text-sm font-mono dir-ltr text-right"
+                />
+              </div>
             </div>
           </div>
         )}

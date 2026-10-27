@@ -34,6 +34,7 @@ export interface SiteSettings {
   linkedin_url?: string;
   instagram_url?: string;
   twitter_url?: string;
+  threads_url?: string;
 
   // Landing Page Content
   hero_badge?: string;
