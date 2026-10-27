@@ -44,7 +44,7 @@ INSERT INTO "AdminUser" ("id", "email", "passwordHash", "name", "role", "created
 VALUES (
     'admin_super',
     'admin@madartrans.com',
-    '$2a$10$4BD3Gzx28YMVaQ7irGVFqentQRCke0BlrDTxD1p2ls2QddSAgfnle',
+    '$2a$10$5.B3XuJ/NAhCSpFNvcmEu.c0YyiMVKYO6KvANRbvd8qZRPxu3dB2a',
     'مدير مدار للنقل',
     'ADMIN',
     CURRENT_TIMESTAMP,

@@ -341,8 +341,8 @@ interface AdminStoredUser {
 const DEFAULT_ADMIN: AdminStoredUser = {
   id: "admin_super",
   email: "admin@madartrans.com",
-  // Hash for 'MadarAdmin2025!'
-  passwordHash: bcrypt.hashSync("MadarAdmin2025!", 10),
+  // Hash for 'adminpassword2026!'
+  passwordHash: bcrypt.hashSync("adminpassword2026!", 10),
   name: "مدير مدار للنقل",
   role: "ADMIN",
 };

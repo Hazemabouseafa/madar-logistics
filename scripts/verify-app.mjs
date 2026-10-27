@@ -13,7 +13,7 @@ async function runTests() {
   console.log("🧪 Starting Automated Verification for Madar Logistics...");
 
   // 1. Verify admin login credentials
-  const auth = await verifyAdminCredentials("admin@madartrans.com", "MadarAdmin2025!");
+  const auth = await verifyAdminCredentials("admin@madartrans.com", "adminpassword2026!");
   if (!auth || auth.email !== "admin@madartrans.com") {
     throw new Error("Admin authentication verification failed!");
   }

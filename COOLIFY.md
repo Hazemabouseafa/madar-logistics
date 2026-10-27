@@ -52,4 +52,4 @@
 ## 🔑 بيانات تسجيل الدخول الافتراضية للوحة التحكم:
 - الرابط: `https://your-domain/admin/login` (أو `http://localhost:3000/admin/login`)
 - البريد: `admin@madartrans.com`
-- كلمة المرور: `MadarAdmin2025!`
+- كلمة المرور: `adminpassword2026!`
